@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 
+const categories = ['Top', 'Bottom', 'Shoes', 'Outerwear', 'Accessory'];
+const seasons = ['All', 'Spring', 'Summer', 'Fall', 'Winter'];
+
 const AddClothingItemForm = ({ onAddItem }) => {
   const [formData, setFormData] = useState({
     name: '',
@@ -20,6 +23,10 @@ const AddClothingItemForm = ({ onAddItem }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!formData.category || !formData.season) {
+      alert('Please select a category and season');
+      return;
+    }
     setLoading(true);
     await onAddItem(formData);
     setLoading(false);
@@ -36,13 +43,17 @@ const AddClothingItemForm = ({ onAddItem }) => {
           onChange={handleChange}
           className="p-2 border rounded"
         />
-        <input
-          type="text"
+        <select
           name="category"
-          placeholder="Category"
           onChange={handleChange}
           className="p-2 border rounded"
-        />
+          defaultValue=""
+        >
+          <option value="" disabled>Select a category</option>
+          {categories.map((cat) => (
+            <option key={cat} value={cat}>{cat}</option>
+          ))}
+        </select>
         <input
           type="text"
           name="colors"
@@ -50,13 +61,17 @@ const AddClothingItemForm = ({ onAddItem }) => {
           onChange={handleChange}
           className="p-2 border rounded"
         />
-        <input
-          type="text"
+        <select
           name="season"
-          placeholder="Season"
           onChange={handleChange}
           className="p-2 border rounded"
-        />
+          defaultValue=""
+        >
+          <option value="" disabled>Select a season</option>
+          {seasons.map((season) => (
+            <option key={season} value={season}>{season}</option>
+          ))}
+        </select>
         <input
           type="file"
           name="image"

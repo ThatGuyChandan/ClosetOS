@@ -27,9 +27,25 @@ model ClothingItem {
   userId    Int
   user      User     @relation(fields: [userId], references: [id])
   name      String
-  category  String
+  category  Category
   colors    String[]
-  season    String
+  season    Season
   imageUrl  String
   createdAt DateTime @default(now())
+}
+
+enum Category {
+  Top
+  Bottom
+  Shoes
+  Outerwear
+  Accessory
+}
+
+enum Season {
+  All
+  Spring
+  Summer
+  Fall
+  Winter
 }
