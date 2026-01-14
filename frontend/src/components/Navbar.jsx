@@ -19,6 +19,7 @@ const Navbar = () => {
         {token ? (
           <>
             <Link to="/dashboard" className="px-4 py-2 text-lg text-gray-600 hover:text-gray-800">Dashboard</Link>
+            <Link to="/wardrobe" className="px-4 py-2 text-lg text-gray-600 hover:text-gray-800">Wardrobe</Link>
             <Link to="/profile" className="px-4 py-2 text-lg text-gray-600 hover:text-gray-800">Profile</Link>
             <button onClick={handleLogout} className="px-4 py-2 ml-4 text-lg text-white bg-indigo-600 rounded-md hover:bg-indigo-700">Logout</button>
           </>
