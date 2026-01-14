@@ -20,4 +20,6 @@ export const getWardrobeItems = () => API.get('/wardrobe');
 export const addWardrobeItem = (item) => API.post('/wardrobe', item);
 export const deleteWardrobeItem = (id) => API.delete(`/wardrobe/${id}`);
 
+export const generateOutfit = (params) => API.post('/outfits/generate', params);
+
 export default API;

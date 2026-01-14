@@ -6,6 +6,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import Wardrobe from './pages/Wardrobe';
+import OutfitGenerator from './pages/OutfitGenerator';
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -38,6 +39,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Wardrobe />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/outfit-generator"
+          element={
+            <ProtectedRoute>
+              <OutfitGenerator />
             </ProtectedRoute>
           }
         />

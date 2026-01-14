@@ -3,34 +3,50 @@ import { Link } from 'react-router-dom';
 
 const Landing = () => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
-      <div className="text-center">
-        <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
-          <span className="block">Welcome to</span>
-          <span className="block text-indigo-600">ClosetOS</span>
-        </h1>
-        <p className="max-w-md mx-auto mt-3 text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
-          The best way to manage your closet.
-        </p>
-        <div className="max-w-md mx-auto mt-5 sm:flex sm:justify-center md:mt-8">
-          <div className="rounded-md shadow">
+    <div className="min-h-screen bg-gradient-to-b from-[#1a1a2e] to-[#16213e] flex flex-col">
+      <div className="flex-1 flex flex-col justify-center px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto w-full">
+          <div className="flex items-center gap-2 mb-6">
+            <span className="px-3 py-1 bg-gray-800/50 rounded-full text-sm text-white flex items-center gap-2">
+              <span>✓</span> Smart Wardrobe Platform
+            </span>
+            <span className="px-3 py-1 bg-gray-800/50 rounded-full text-sm text-white flex items-center gap-2">
+              <span>✎</span> Rule-based outfits
+            </span>
+            <span className="px-3 py-1 bg-gray-800/50 rounded-full text-sm text-white">• No AI required</span>
+          </div>
+          
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-white leading-tight mb-6">
+            Organize your<br/>
+            wardrobe. Generate<br/>
+            outfits. Look great<br/>
+            every day.
+          </h1>
+          
+          <p className="text-xl text-gray-300 mb-8 max-w-2xl">
+            Upload your clothing, tag it with categories and colors, and get deterministic, context-aware outfits for any occasion.
+          </p>
+          
+          <div className="flex flex-col sm:flex-row gap-4">
             <Link
               to="/register"
-              className="flex items-center justify-center w-full px-8 py-3 text-base font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 md:py-4 md:text-lg md:px-10"
+              className="px-8 py-4 bg-white text-gray-900 rounded-lg font-medium hover:bg-gray-100 transition-colors text-center"
             >
               Get started
             </Link>
-          </div>
-          <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
             <Link
               to="/login"
-              className="flex items-center justify-center w-full px-8 py-3 text-base font-medium text-indigo-600 bg-white border border-transparent rounded-md hover:bg-gray-50 md:py-4 md:text-lg md:px-10"
+              className="px-8 py-4 bg-transparent border-2 border-white/30 text-white rounded-lg font-medium hover:border-white/50 transition-colors text-center"
             >
-              Sign in
+              Explore features
             </Link>
           </div>
         </div>
       </div>
+      
+      <footer className="py-8 text-center text-gray-400 text-sm">
+        © 2026 ClosetOS. Built with modern, vibrant design.
+      </footer>
     </div>
   );
 };
