@@ -1,58 +1,21 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Landing from './pages/Landing';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
-import Profile from './pages/Profile';
-import Wardrobe from './pages/Wardrobe';
-import OutfitGenerator from './pages/OutfitGenerator';
-import Navbar from './components/Navbar';
-import ProtectedRoute from './components/ProtectedRoute';
+import Navbar from './components/Navbar'
+import Hero from './components/Hero'
+import Features from './components/Features'
+import Phases from './components/Phases'
+import CTA from './components/CTA'
+import Footer from './components/Footer'
 
 function App() {
   return (
-    <Router>
+    <div className="min-h-screen bg-slate-950 text-white">
       <Navbar />
-      <Routes>
-        <Route path="/" element={<Landing />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoute>
-              <Profile />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/wardrobe"
-          element={
-            <ProtectedRoute>
-              <Wardrobe />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/outfit-generator"
-          element={
-            <ProtectedRoute>
-              <OutfitGenerator />
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
-    </Router>
-  );
+      <Hero />
+      <Features />
+      <Phases />
+      <CTA />
+      <Footer />
+    </div>
+  )
 }
 
-export default App;
+export default App

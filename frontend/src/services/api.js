@@ -1,25 +1,69 @@
 import axios from 'axios';
 
-const API = axios.create({
-  baseURL: 'http://localhost:3001/api',
-});
+const API_URL = import.meta.env.VITE_API_URL;
 
-API.interceptors.request.use((req) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    req.headers['x-auth-token'] = token;
-  }
-  return req;
-});
+const register = async (name, email, password) => {
+  return axios.post(`${API_URL}/auth/register`, {
+    name,
+    email,
+    password,
+  });
+};
 
-export const login = (formData) => API.post('/auth/login', formData);
-export const register = (formData) => API.post('/auth/register', formData);
-export const getProfile = () => API.get('/auth/profile');
+const login = async (email, password) => {
+  return axios.post(`${API_URL}/auth/login`, {
+    email,
+    password,
+  });
+};
 
-export const getWardrobeItems = () => API.get('/wardrobe');
-export const addWardrobeItem = (item) => API.post('/wardrobe', item);
-export const deleteWardrobeItem = (id) => API.delete(`/wardrobe/${id}`);
+const getWardrobeItems = async (token) => {
+  return axios.get(`${API_URL}/wardrobe`, {
+    headers: {
+      'x-auth-token': token,
+    },
+  });
+};
 
-export const generateOutfit = (params) => API.post('/outfits/generate', params);
+const addWardrobeItem = async (formData, token) => {
+  return axios.post(`${API_URL}/wardrobe`, formData, {
+    headers: {
+      'x-auth-token': token,
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+};
 
-export default API;
+const deleteWardrobeItem = async (id, token) => {
+  return axios.delete(`${API_URL}/wardrobe/${id}`, {
+    headers: {
+      'x-auth-token': token,
+    },
+  });
+};
+
+const generateOutfit = async (occasion, token) => {
+  return axios.post(`${API_URL}/outfits/generate`, { occasion }, {
+    headers: {
+      'x-auth-token': token,
+    },
+  });
+};
+
+const getProfile = async (token) => {
+  return axios.get(`${API_URL}/auth/profile`, {
+    headers: {
+      'x-auth-token': token,
+    },
+  });
+};
+
+export default {
+  register,
+  login,
+  getWardrobeItems,
+  addWardrobeItem,
+  deleteWardrobeItem,
+  generateOutfit,
+  getProfile,
+};

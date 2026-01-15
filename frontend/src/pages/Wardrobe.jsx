@@ -1,134 +1,187 @@
-import React, { useState, useEffect } from 'react';
-import API from '../services/api';
-import AddClothingItemForm from '../components/AddClothingItemForm';
+import { useState, useEffect } from 'react';
+import { Trash2, UploadCloud, Tag, Palette, CalendarRange } from 'lucide-react';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import api from '../services/api';
 
-const Wardrobe = () => {
-  const [wardrobeItems, setWardrobeItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  const fetchWardrobeItems = async () => {
-    try {
-      const { data } = await API.get('/wardrobe');
-      setWardrobeItems(data);
-    } catch (error) {
-      console.error('Failed to fetch wardrobe items', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+export default function Wardrobe() {
+  const [items, setItems] = useState([]);
+  const [name, setName] = useState('');
+  const [category, setCategory] = useState('Top');
+  const [colors, setColors] = useState('');
+  const [season, setSeason] = useState('All');
+  const [image, setImage] = useState(null);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    fetchWardrobeItems();
+    const fetchItems = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await api.getWardrobeItems(token);
+        setItems(response.data);
+      } catch (err) {
+        if (err.response) {
+          setError(err.response.data.message);
+        } else {
+          setError('Failed to fetch wardrobe items. Please try again.');
+        }
+      }
+    };
+    fetchItems();
   }, []);
 
-  const handleAddItem = async (formData) => {
-    const data = new FormData();
-    data.append('name', formData.name);
-    data.append('category', formData.category);
-    data.append('colors', formData.colors);
-    data.append('season', formData.season);
-    data.append('image', formData.image);
-
+  const handleAddItem = async (e) => {
+    e.preventDefault();
     try {
-      await API.post('/wardrobe', data, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      fetchWardrobeItems();
-    } catch (error) {
-      console.error('Failed to add item', error);
-    }
-  };
+      const token = localStorage.getItem('token');
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('category', category);
+      formData.append('colors', colors);
+      formData.append('season', season);
+      formData.append('image', image);
 
-  const handleDeleteItem = async (id) => {
-    if (window.confirm('Are you sure you want to delete this item?')) {
-      try {
-        await API.delete(`/wardrobe/${id}`);
-        fetchWardrobeItems();
-      } catch (error) {
-        console.error('Failed to delete item', error);
+      const response = await api.addWardrobeItem(formData, token);
+      setItems([...items, response.data]);
+      setName('');
+      setCategory('Top');
+      setColors('');
+      setSeason('All');
+      setImage(null);
+    } catch (err) {
+      if (err.response) {
+        setError(err.response.data.message);
+      } else {
+        setError('Failed to add item. Please try again.');
       }
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-[#1a1a2e] to-[#16213e] flex items-center justify-center">
-        <div className="text-white">Loading...</div>
-      </div>
-    );
-  }
+  const handleDeleteItem = async (id) => {
+    try {
+      const token = localStorage.getItem('token');
+      await api.deleteWardrobeItem(id, token);
+      setItems(items.filter((item) => item.id !== id));
+    } catch (err) {
+      if (err.response) {
+        setError(err.response.data.message);
+      } else {
+        setError('Failed to delete item. Please try again.');
+      }
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#1a1a2e] to-[#16213e] py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold text-white mb-2">Wardrobe</h1>
-        <p className="text-gray-400 mb-8">Upload clothing with image, category, colors and season. Manage items in a clean grid.</p>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Panel - Add Form */}
-          <div className="lg:col-span-1">
-            <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 sticky top-4">
-              <h2 className="text-xl font-bold text-white mb-4">Add clothing</h2>
-              <AddClothingItemForm onAddItem={handleAddItem} />
-            </div>
-          </div>
-
-          {/* Right Panel - Grid */}
-          <div className="lg:col-span-2">
-            <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6">
-              <h2 className="text-xl font-bold text-white mb-4">Your items</h2>
-              {wardrobeItems.length === 0 ? (
-                <div className="text-center py-12 text-gray-400">
-                  No items yet. Add some to your wardrobe!
+    <div className="min-h-screen bg-slate-950 text-white">
+      <Navbar />
+      <main className="pt-28 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur p-6">
+          <h1 className="text-2xl font-bold">Wardrobe</h1>
+          <p className="mt-2 text-white/70">Upload clothing with image, category, colors and season. Manage items in a clean grid.</p>
+          <div className="mt-6 grid lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-1 rounded-xl border border-white/10 bg-white/5 backdrop-blur p-6">
+              <h2 className="text-lg font-semibold">Add clothing</h2>
+              {error && <p className="mt-4 text-red-500">{error}</p>}
+              <form className="mt-4 space-y-4" onSubmit={handleAddItem}>
+                <div>
+                  <label className="block text-sm text-white/80">Name</label>
+                  <input
+                    type="text"
+                    className="mt-1 w-full rounded-lg bg-slate-900/60 border border-white/10 px-3 py-2 text-white placeholder:text-white/40"
+                    placeholder="e.g., Navy Chinos"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
                 </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {wardrobeItems.map((item) => (
-                    <div key={item.id} className="bg-gray-700/50 rounded-lg overflow-hidden hover:bg-gray-700 transition-colors">
-                      <div className="relative">
-                        <img 
-                          src={item.imageUrl} 
-                          alt={item.name} 
-                          className="w-full h-48 object-cover"
-                        />
+                <div>
+                  <label className="block text-sm text-white/80 flex items-center gap-2"><Tag className="h-4 w-4"/> Category</label>
+                  <select
+                    className="mt-1 w-full rounded-lg bg-slate-900/60 border border-white/10 px-3 py-2 text-white"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                  >
+                    <option>Top</option>
+                    <option>Bottom</option>
+                    <option>Shoes</option>
+                    <option>Outerwear</option>
+                    <option>Accessory</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm text-white/80 flex items-center gap-2"><Palette className="h-4 w-4"/> Colors</label>
+                  <input
+                    type="text"
+                    className="mt-1 w-full rounded-lg bg-slate-900/60 border border-white/10 px-3 py-2 text-white placeholder:text-white/40"
+                    placeholder="comma-separated (e.g., navy, white)"
+                    value={colors}
+                    onChange={(e) => setColors(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-white/80 flex items-center gap-2"><CalendarRange className="h-4 w-4"/> Season</label>
+                  <select
+                    className="mt-1 w-full rounded-lg bg-slate-900/60 border border-white/10 px-3 py-2 text-white"
+                    value={season}
+                    onChange={(e) => setSeason(e.target.value)}
+                  >
+                    <option>All</option>
+                    <option>Spring</option>
+                    <option>Summer</option>
+                    <option>Fall</option>
+                    <option>Winter</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm text-white/80">Image</label>
+                  <input
+                    type="file"
+                    className="mt-1 w-full text-white"
+                    onChange={(e) => setImage(e.target.files[0])}
+                  />
+                </div>
+                <button type="submit" className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-white text-slate-900 font-semibold hover:bg-white/90">
+                  <UploadCloud className="h-4 w-4"/> Add Item
+                </button>
+              </form>
+            </div>
+            <div className="lg:col-span-2">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-semibold">Your items</h2>
+              </div>
+              <div className="mt-4 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {items.map((item) => (
+                  <div key={item.id} className="rounded-xl border border-white/10 overflow-hidden bg-white/5 backdrop-blur">
+                    <div className="aspect-video bg-slate-900/50">
+                      <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
+                    </div>
+                    <div className="p-4">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h3 className="font-semibold">{item.name}</h3>
+                          <p className="text-sm text-white/70">{item.category} • {item.season}</p>
+                        </div>
                         <button
+                          className="p-2 rounded-lg bg-white/10 border border-white/10 hover:bg-white/15"
+                          title="Delete"
                           onClick={() => handleDeleteItem(item.id)}
-                          className="absolute top-2 right-2 p-2 bg-red-600/80 hover:bg-red-600 rounded-lg text-white transition-colors"
-                          title="Delete item"
                         >
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd"/>
-                          </svg>
+                          <Trash2 className="h-4 w-4 text-white/80" />
                         </button>
                       </div>
-                      <div className="p-4">
-                        <h3 className="text-lg font-bold text-white mb-2">{item.name}</h3>
-                        <div className="text-gray-400 text-sm mb-3">
-                          {item.category} • {item.season}
-                        </div>
-                        <div className="flex flex-wrap gap-2">
-                          {item.colors.map((color, idx) => (
-                            <span
-                              key={idx}
-                              className="px-2 py-1 bg-gray-600/50 text-white text-xs rounded"
-                            >
-                              {color}
-                            </span>
-                          ))}
-                        </div>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {item.colors.map((c) => (
+                          <span key={c} className="px-2 py-1 text-xs rounded-full bg-white/10 border border-white/10 text-white/80">{c}</span>
+                        ))}
                       </div>
                     </div>
-                  ))}
-                </div>
-              )}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </main>
+      <Footer />
     </div>
   );
-};
-
-export default Wardrobe;
+}
